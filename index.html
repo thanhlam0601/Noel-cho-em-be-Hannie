@@ -61,7 +61,7 @@
         }
 
         #error-log { display: none; position: absolute; top: 0; left: 0; color: red; background: rgba(0,0,0,0.8); z-index: 999; padding: 10px; }
-        /* Snow effect */
+        /* ❄ Snow effect FIXED */
         .snowflake {
             position: fixed;
             top: -10px;
@@ -69,14 +69,28 @@
             user-select: none;
             pointer-events: none;
             z-index: 9999;
-            animation: fall linear infinite;
+
+            opacity: 1;
+            --x: 0px;
+            transform: translateX(var(--x)) translateY(0);
+            animation: fall linear infinite, sway ease-in-out infinite;
         }
 
+        /* Rơi xuống + mờ dần */
         @keyframes fall {
-            to {
-                transform: translateY(100vh);
-            }
+                to {
+            transform: translateX(var(--x)) translateY(110vh);
+            opacity: 0;
         }
+}
+
+        /* Lắc ngang (chỉ đổi biến --x) */
+        @keyframes sway {
+            0%   { --x: 0px; }
+            25%  { --x: -30px; }
+            75%  { --x: 30px; }
+            100% { --x: 0px; }
+}
     </style>
 </head>
 <body>
@@ -545,20 +559,36 @@
         });
     </script>
     <script>
+        console.log("❄ Snow fixed & running");
+        
         const snowChars = ["❄", "❅", "❆"];
+        
         function createSnow() {
             const snow = document.createElement("div");
             snow.className = "snowflake";
-            snow.innerText = snowChars[Math.floor(Math.random() * snowChars.length)];
-            snow.style.left = Math.random() * window.innerWidth + "px";
-            snow.style.fontSize = Math.random() * 16 + 10 + "px";
+            snow.textContent = snowChars[Math.floor(Math.random() * snowChars.length)];
+        
+            const size = 8 + Math.random() * 20;
+            const startX = Math.random() * window.innerWidth;
+            const fallDuration = 6 + Math.random() * 6;
+            const swayDuration = 3 + Math.random() * 3;
+        
+            snow.style.left = startX + "px";
+            snow.style.fontSize = size + "px";
             snow.style.opacity = Math.random();
-            snow.style.animationDuration = Math.random() * 5 + 5 + "s";
+        
+            snow.style.animationDuration = `${fallDuration}s, ${swayDuration}s`;
+        
             document.body.appendChild(snow);
-            setTimeout(() => snow.remove(), 10000);
+        
+            setTimeout(() => snow.remove(), fallDuration * 1000);
         }
-        setInterval(createSnow, 250);
-    </script>
-    
+        
+        setInterval(() => {
+            if (document.querySelectorAll('.snowflake').length < 120) {
+                createSnow();
+            }
+        }, 180);        
+        </script> 
 </body>
 </html>
