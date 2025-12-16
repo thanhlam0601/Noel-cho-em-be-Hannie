@@ -61,6 +61,22 @@
         }
 
         #error-log { display: none; position: absolute; top: 0; left: 0; color: red; background: rgba(0,0,0,0.8); z-index: 999; padding: 10px; }
+        /* Snow effect */
+        .snowflake {
+            position: fixed;
+            top: -10px;
+            color: white;
+            user-select: none;
+            pointer-events: none;
+            z-index: 9999;
+            animation: fall linear infinite;
+        }
+
+        @keyframes fall {
+            to {
+                transform: translateY(100vh);
+            }
+        }
     </style>
 </head>
 <body>
@@ -528,5 +544,21 @@
             if(camera) { camera.aspect = window.innerWidth/window.innerHeight; camera.updateProjectionMatrix(); renderer.setSize(window.innerWidth, window.innerHeight); }
         });
     </script>
+    <script>
+        const snowChars = ["❄", "❅", "❆"];
+        function createSnow() {
+            const snow = document.createElement("div");
+            snow.className = "snowflake";
+            snow.innerText = snowChars[Math.floor(Math.random() * snowChars.length)];
+            snow.style.left = Math.random() * window.innerWidth + "px";
+            snow.style.fontSize = Math.random() * 16 + 10 + "px";
+            snow.style.opacity = Math.random();
+            snow.style.animationDuration = Math.random() * 5 + 5 + "s";
+            document.body.appendChild(snow);
+            setTimeout(() => snow.remove(), 10000);
+        }
+        setInterval(createSnow, 250);
+    </script>
+    
 </body>
 </html>
